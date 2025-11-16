@@ -50,16 +50,28 @@ if option == "Paging Simulation":
         st.markdown("<div class='result-card'>", unsafe_allow_html=True)
         pages_input = st.text_input("Enter page reference string (comma separated):", "1,2,3,4,2,1,5,1,2,3,4,5")
         frames = st.number_input("Enter number of frames:", 1, 10, 3)
-        algo = st.selectbox("Select Page Replacement Algorithm:", ["LRU", "Optimal"])
+
+        # UPDATED DROPDOWN WITH 4 ALGORITHMS
+        algo = st.selectbox(
+            "Select Page Replacement Algorithm:",
+            ["LRU", "Optimal", "FIFO", "Second Chance"]
+        )
+
         st.markdown("</div>", unsafe_allow_html=True)
 
     if st.button("▶️ Run Paging Simulation"):
         pages = [int(x.strip()) for x in pages_input.split(",")]
         sim = PagingSimulation(reference_string=pages, n_frames=frames, algorithm=algo)
+
+        # UPDATED ALGORITHM PROCESSING
         if algo == "LRU":
             faults, history = sim.simulate_LRU()
-        else:
+        elif algo == "Optimal":
             faults, history = sim.simulate_Optimal()
+        elif algo == "FIFO":
+            faults, history = sim.simulate_FIFO()
+        else:  # Second Chance
+            faults, history = sim.simulate_SecondChance()
 
         st.markdown("<div class='result-card'>", unsafe_allow_html=True)
         st.subheader("📊 Simulation Results")
@@ -67,6 +79,7 @@ if option == "Paging Simulation":
         fig = plot_paging(history, f"Paging Simulation ({algo})")
         st.pyplot(fig)
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 # ==========================
 # 📦 Segmentation Simulation
